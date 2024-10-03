@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "187839264674",
+    "project_id": "stage-management-app-db",
+    "storage_bucket": "stage-management-app-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187839264674:android:dc66a9fdf26075c52664fb",
+        "android_client_info": {
+          "package_name": "com.example.stage_mgt_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_5sI7Yt9md7Yq6j1Feu5AiWCrelwi5gg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187839264674:android:adfb0d0ff1feb2cc2664fb",
+        "android_client_info": {
+          "package_name": "com.yourdomain.stage_mgt_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_5sI7Yt9md7Yq6j1Feu5AiWCrelwi5gg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
