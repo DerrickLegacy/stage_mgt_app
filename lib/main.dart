@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stage_mgt_app/pages/login_page.dart';
+import 'package:stage_mgt_app/pages/auth_page.dart';
+// import 'package:stage_mgt_app/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -17,10 +18,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       //title: 'Flutter Demo',
-      home: LoginPage(),
+      home: AuthPage(),
     );
   }
 }

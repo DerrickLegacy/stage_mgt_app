@@ -7,9 +7,7 @@ class LoginPage extends StatelessWidget {
   LoginPage({super.key});
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
-  void signUserIn() {
-    
-  }
+  void signUserIn() {}
 
   @override
   Widget build(BuildContext context) {
