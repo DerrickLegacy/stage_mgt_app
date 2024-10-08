@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stage_mgt_app/pages/booking/booking_main.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -24,6 +25,43 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.home),
+          title: const Text('Bookings'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Booking()),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.home),
+          title: const Text('Loyalty Points'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.notifications_active),
+          title: const Text('Notifications'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.format_color_fill),
+          title: const Text('Profile'),
+          onTap: () {},
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.home),
+          title: const Text('Support Contact Us'),
+          onTap: () {},
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.exit_to_app_outlined),
+          title: const Text('Exit'),
+          onTap: () {},
         ),
       ],
     ));
