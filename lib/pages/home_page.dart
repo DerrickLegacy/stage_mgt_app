@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:stage_mgt_app/components/drawer.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+
+  final loggedInUser = FirebaseAuth.instance.currentUser!;
 
   void signUserOut() {
     FirebaseAuth.instance.signOut();
@@ -22,8 +24,8 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: const Center(
-        child: Text('User is logged in'),
+      body: Center(
+        child: Text("User is logged in as ${loggedInUser.email}"),
       ),
     );
   }
