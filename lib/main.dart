@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          appBarTheme: AppBarTheme(
-        color: Colors.amber[100],
+          appBarTheme: const AppBarTheme(
+        color: Colors.blueAccent,
       )),
       home: const AuthPage(),
     );

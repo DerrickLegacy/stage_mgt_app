@@ -49,7 +49,7 @@ class _BookingState extends State<Booking> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(6.0),
+            padding: const EdgeInsets.all(1.0),
             child: Column(
               children: [
                 Accordion(
@@ -59,13 +59,13 @@ class _BookingState extends State<Booking> {
                   children: [
                     // First Accordion Section - Upcoming Travels
                     AccordionSection(
-                      headerPadding: const EdgeInsets.all(6.0),
+                      headerPadding: const EdgeInsets.all(20.0),
                       isOpen: true,
                       leftIcon:
                           const Icon(Icons.flight_takeoff, color: Colors.white),
                       header: const Text(
                         "Upcoming Travels",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        style: TextStyle(color: Colors.white, fontSize: 25),
                       ),
                       content: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,6 +114,51 @@ class _BookingState extends State<Booking> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 10.0),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Approximate Distance",
+                              hintText: "Approximate Distance",
+                              prefixIcon: Icon(Icons.social_distance),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Approximate Travel Time",
+                              hintText: "Approximate Travel Time",
+                              prefixIcon: Icon(Icons.location_on),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: "Contact Number",
+                                    hintText: "Enter Contact Number",
+                                    prefixIcon: Icon(Icons.phone),
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: "Email Address",
+                                    hintText: "Enter Email Address",
+                                    prefixIcon: Icon(Icons.email),
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
                         ],
                       ),
                       headerBackgroundColorOpened: Colors.blue,
@@ -123,17 +168,61 @@ class _BookingState extends State<Booking> {
 
                     // Second Accordion Section - Book For A Journey
                     AccordionSection(
-                      headerPadding: const EdgeInsets.all(6.0),
+                      headerPadding: const EdgeInsets.all(20.0),
                       isOpen: true,
                       leftIcon:
                           const Icon(Icons.flight_takeoff, color: Colors.white),
                       header: const Text(
                         "Book For A Journey",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        style: TextStyle(color: Colors.white, fontSize: 25),
                       ),
                       content: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const Text(
+                            "Personal Details",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Name",
+                              hintText: "Name",
+                              prefixIcon: Icon(Icons.location_on),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: "Contact Number",
+                                    hintText: "Enter Contact Number",
+                                    prefixIcon: Icon(Icons.phone),
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: "Email Address",
+                                    hintText: "Enter Email Address",
+                                    prefixIcon: Icon(Icons.email),
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10.0),
+                          const Text(
+                            "Route",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: "From",
@@ -183,13 +272,14 @@ class _BookingState extends State<Booking> {
                             "Select Payment Method",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 10.0),
                           Padding(
                             padding: const EdgeInsets.only(left: 0.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 ListTile(
+                                  contentPadding: EdgeInsets
+                                      .zero, // Reducing ListTile padding
                                   title: const Text('Mobile Money'),
                                   leading: Radio<Character>(
                                     value: Character.mobileMoney,
@@ -202,14 +292,16 @@ class _BookingState extends State<Booking> {
                                   ),
                                 ),
                                 ListTile(
+                                  contentPadding: EdgeInsets
+                                      .zero, // Reducing ListTile padding
                                   title: const Text('Credit Card'),
                                   leading: Radio<Character>(
                                     value: Character.creditCard,
                                     groupValue: _character,
                                     onChanged: (Character? value) {
-                                      setState(() {
-                                        _character = value;
-                                      });
+                                      // setState(() {
+                                      //   _character = value;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -225,12 +317,12 @@ class _BookingState extends State<Booking> {
 
                     // Third Accordion Section - Travel History
                     AccordionSection(
-                      headerPadding: const EdgeInsets.all(6.0),
+                      headerPadding: const EdgeInsets.all(20.0),
                       isOpen: true,
                       leftIcon: const Icon(Icons.history, color: Colors.white),
                       header: const Text(
                         "History",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        style: TextStyle(color: Colors.white, fontSize: 25),
                       ),
                       content: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,11 +356,12 @@ class _BookingState extends State<Booking> {
 
                     // Fourth Accordion Section - Contact Support
                     AccordionSection(
+                      headerPadding: const EdgeInsets.all(20.0),
                       leftIcon:
                           const Icon(Icons.contact_phone, color: Colors.white),
                       header: const Text(
                         "Contact Support",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(color: Colors.white, fontSize: 25),
                       ),
                       content: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
