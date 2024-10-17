@@ -26,12 +26,12 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
           decoration: const BoxDecoration(
-    gradient: LinearGradient(
-      colors: [Colors.purple, Colors.blue],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-  ),
+            gradient: LinearGradient(
+              colors: [Colors.purple, Colors.blue],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
         ),
         ListTile(
           leading: const Icon(Icons.home),
