@@ -9,7 +9,7 @@ class LoyaltyBalanceCard extends StatelessWidget {
         height: 150.0, // Adjust the height as needed
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.lightBlue[100], // Light blue color
+          color: Colors.white, // Light blue color
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
@@ -31,11 +31,11 @@ class LoyaltyBalanceCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  //color: Colors.white,
                 ),
               ),
               const SizedBox(height: 10),
-              
+
               // Main points section with the circular icon
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,9 +48,9 @@ class LoyaltyBalanceCard extends StatelessWidget {
                         backgroundColor: Colors.white.withOpacity(0.2),
                         radius: 25,
                         child: const Icon(
-                          Icons.emoji_events,
+                          Icons.card_giftcard,
                           size: 30,
-                          color: Colors.white,
+                          color: Colors.purple,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -63,14 +63,14 @@ class LoyaltyBalanceCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              // color: Colors.white,
                             ),
                           ),
                           Text(
                             "1200 points till your next reward",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.white,
+                              // color: Colors.white,
                             ),
                           ),
                         ],
@@ -79,7 +79,7 @@ class LoyaltyBalanceCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const Spacer(), // Push the rest to the bottom
 
               // Bottom row with user details
@@ -90,14 +90,14 @@ class LoyaltyBalanceCard extends StatelessWidget {
                     "Derrick Legacy",
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white, 
+                      // color: Colors.white,
                     ),
                   ),
                   Text(
                     "XXXX 2345",
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white,
+                      color: Colors.red,
                     ),
                   ),
                 ],
