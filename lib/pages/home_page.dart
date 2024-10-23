@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:stage_mgt_app/components/drawer.dart';
+import 'package:stage_mgt_app/components/loyaltycard.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -58,44 +59,14 @@ class HomePage extends StatelessWidget {
             expandedHeight: 350.0,
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                height: 250.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    "User is logged in as ${loggedInUser.email}",
-                    style: const TextStyle(fontSize: 18, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+            child: _buildInfoCard2(
+              "User is logged in as ${loggedInUser.email}",
+              "Derrick Legacy", // User location
+              '', // Path to the avatar image
             ),
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                height: 250.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    "User is logged in as ${loggedInUser.email}",
-                    style: const TextStyle(fontSize: 18, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
+            child: LoyaltyBalanceCard(),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -138,6 +109,77 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard2(String name, String location, String avatarUrl) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Container(
+        height: 80.0, // Adjust height as needed
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: const Offset(0, 2), // Shadow position
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Row(
+            children: [
+              // Avatar
+              CircleAvatar(
+                radius: 30, // Adjust the size as needed
+                backgroundImage: AssetImage(avatarUrl), // Avatar image
+              ),
+              const SizedBox(width: 15),
+              // User Information
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      location,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Icons (Bell and Settings)
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  // Notification icon action
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  // Settings icon action
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
