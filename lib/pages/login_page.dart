@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:stage_mgt_app/components/imageSquareTitle.dart';
 import 'package:stage_mgt_app/components/my_button.dart';
 import 'package:stage_mgt_app/components/my_textfield.dart';
+import 'package:stage_mgt_app/pages/register_page.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -125,11 +126,9 @@ class _LoginPageState extends State<LoginPage> {
                   fontSize: 16,
                 ),
               ),
-
               const SizedBox(
                 height: 25.0,
               ),
-
               // Username textfield
               MyTextField(
                 controller: userNameController,
@@ -148,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 10.0,
               ),
-              // forgot passwordx
+              // forgot password
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -164,11 +163,12 @@ class _LoginPageState extends State<LoginPage> {
               // sign in button
               MyButton(
                 onTap: signUserIn,
+                title: 'Sign In',
               ),
               const SizedBox(
                 height: 90.0,
               ),
-              //continue with
+              // continue with
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -201,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 50.0,
               ),
-              // Google sign in
+              // Google and Apple sign-in options
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -216,7 +216,6 @@ class _LoginPageState extends State<LoginPage> {
                 height: 40.0,
               ),
               // register now text
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -228,8 +227,17 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text(
                       "Register now",
                       style: TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()),
+                      );
+                    },
                   ),
                 ],
               ),
