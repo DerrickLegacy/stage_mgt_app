@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:stage_mgt_app/components/drawer.dart';
 import 'package:stage_mgt_app/components/loyaltycard.dart';
+import 'package:stage_mgt_app/components/remindar_c.dart';
+import 'package:stage_mgt_app/components/reminderCard.dart';
+import 'package:stage_mgt_app/components/service_card.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -119,46 +122,23 @@ class HomePage extends StatelessWidget {
           SliverToBoxAdapter(
             child: LoyaltyBalanceCard(),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                height: 250.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    "User is logged in as ${loggedInUser.email}",
-                    style: const TextStyle(fontSize: 18, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
+
+          const SliverToBoxAdapter(
+            child: OurServices(),
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                height: 250.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    "User is logged in as ${loggedInUser.email}",
-                    style: const TextStyle(fontSize: 18, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
+            child: OurRemainder(),
           ),
+          // SliverToBoxAdapter(
+          //     child: ReminderCard(
+          //       taxiNumberPlate: "UBC 123X",
+          //       driverName: "John Doe",
+          //       departureTime: "10:30 AM",
+          //       onCallTap: () {
+          //      print("Calling John Doe");
+          //      },
+          //    ),
+          //   ),
         ],
       ),
     );
