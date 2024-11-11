@@ -19,6 +19,8 @@ class TrucksScreen extends StatelessWidget {
     Truck(name: 'Truck 2', hourlyRate: 20, imageUrl: 'lib/images/truck.jpg'),
     // ... more trucks
   ];
+  
+  get onCallTap => null;
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +45,13 @@ class TrucksScreen extends StatelessWidget {
                     borderRadius:BorderRadius.circular(20),
                     child: Image.asset(
                            truck.imageUrl,
-                            width: 80,
-                           height: 80,
+                            width: 100,
+                           height: 100,
                            fit: BoxFit.cover,
                     ),
 
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: 20),
                    Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,6 +82,8 @@ class TrucksScreen extends StatelessWidget {
                       color: Colors.brown[800],
                     ),
                   ),
+                    // Service Image
+                  
                 ],
               ),
             ),
@@ -87,8 +91,8 @@ class TrucksScreen extends StatelessWidget {
 
                 ],
 
-              ) 
-
+              ) ,
+            
           );
           // return ListTile(
           //   //leading: Image.network(truck.imageUrl),

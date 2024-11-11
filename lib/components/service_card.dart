@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stage_mgt_app/pages/machineOperators.dart';
 import 'package:stage_mgt_app/pages/trucks.dart';
 
 class ServiceCard extends StatelessWidget {
@@ -133,13 +134,22 @@ class OurServices extends StatelessWidget {
            Row(
             //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Expanded(
-                child: ServiceCard(
+              Expanded(
+                child: GestureDetector(
+                  onTap:(){
+                    // Navigate to a specific screen or perform an action
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => MachineOperatorsScreen(),
+                    ));
+                  },
+                  child: const ServiceCard(
                   title: "Hire TruckOperators",
                   imagePath:
                       'lib/images/operator.jpg', // Replace with your image path
                   // isNew: true, // Show "NEW" badge
                 ),
+                )
+                
               ),
               Expanded(
                child: GestureDetector(
