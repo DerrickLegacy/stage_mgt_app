@@ -76,7 +76,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void signUserIn() async {
-    // Show the login loading circle
     showDialog(
       context: context,
       builder: (context) {

@@ -1,14 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stage_mgt_app/backend/models/user.dart';
+import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/pages/booking/booking_main.dart';
 import 'package:stage_mgt_app/pages/contact_us/contact_us.dart';
 import 'package:stage_mgt_app/pages/loyalty_points/loyalty_points.dart';
 import 'package:stage_mgt_app/pages/notification/notification_page.dart';
 import 'package:stage_mgt_app/pages/profile/profile_page.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
-  final loggedInUser = "Derrick";
+
+  @override
+  _AppDrawerState createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  String loggedInUser = "Loading..."; // Placeholder text for username
+  String userEmail = "Loading..."; // Placeholder text for email
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserDetails();
+  }
+
+  void _loadUserDetails() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? userId = preferences.getString('userId');
+
+    if (userId != null) {
+      UserService userService = UserService();
+      try {
+        User? useradd = await userService.getUserDetails(userId);
+        setState(() {
+          loggedInUser = useradd!.username;
+          userEmail = useradd.email;
+        });
+        print(loggedInUser);
+      } catch (e) {
+        setState(() {
+          loggedInUser = 'Error loading user';
+          userEmail = 'No email available';
+        });
+      }
+    } else {
+      setState(() {
+        loggedInUser = 'Guest';
+        userEmail = 'No email available';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +59,12 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text(
-              "AHAABWE DERRICK", // Display name or fallback
-              style: TextStyle(color: Colors.black),
+            accountName: Text(
+              loggedInUser, // Display dynamic name or fallback
+              style: const TextStyle(color: Colors.black),
             ),
             accountEmail: Text(
-              loggedInUser, // User's email or fallback
+              userEmail, // Display dynamic email or fallback
               style: const TextStyle(color: Colors.black),
             ),
             currentAccountPicture: CircleAvatar(
@@ -38,7 +80,7 @@ class AppDrawer extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFF30475E),
+                  Colors.blue,
                   Color(0xffd1c4e9),
                 ],
                 stops: [0.0, 1.0],
@@ -87,15 +129,16 @@ class AppDrawer extends StatelessWidget {
         context,
         icon: Icons.account_circle,
         text: 'Account',
-        page: const Account(showEdit: false),
+        page: const Account(
+          showEdit: false,
+        ),
       ),
       buildDrawerItem(
         context,
         icon: Icons.exit_to_app,
         text: 'Exit',
         onTap: () {
-          // Handle exit logic here
-          Navigator.pop(context); // Close drawer or handle any other logic
+          Navigator.pop(context); // Close the drawer
         },
       ),
     ];
@@ -110,7 +153,7 @@ class AppDrawer extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: Colors.deepPurple,
+        color: Colors.lightBlue[700],
       ),
       title: Text(
         text,

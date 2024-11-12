@@ -1,14 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/components/drawer.dart';
+import 'package:stage_mgt_app/pages/login_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   final loggedInUser = "Derrick";
 
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
+  void signUserOut(BuildContext context) {
+    UserService service = UserService();
+    service
+        .logoutUser(); // Assuming this method properly logs out the user (e.g., clearing session, Firebase sign-out, etc.)
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   @override
@@ -30,7 +35,6 @@ class HomePage extends StatelessWidget {
                 },
               );
             }),
-            // title: const Text("App Name"),
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
@@ -38,6 +42,17 @@ class HomePage extends StatelessWidget {
               title: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'lib/images/taxi.jpeg', // Your image
+                        width: 120,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
+                  ),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -51,29 +66,8 @@ class HomePage extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          //sub title
-                          Text(
-                            "\"With you, to the end of the world we sail\"",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontStyle: FontStyle.italic),
-                          ),
                         ],
                       )
-                    ],
-                  ),
-                  const SizedBox(height: 8), // Spacing between name and image,
-                  // Image Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'lib/images/taxi.jpeg', // Your image
-                        width: 120,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
                     ],
                   ),
                 ],
@@ -97,7 +91,7 @@ class HomePage extends StatelessWidget {
                 ),
                 tooltip: 'Actions',
                 onPressed: () {
-                  signUserOut();
+                  signUserOut(context);
                 },
               ),
             ],
