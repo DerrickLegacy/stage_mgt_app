@@ -1,8 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:stage_mgt_app/backend/models/user.dart' as user_model;
+import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/components/imageSquareTitle.dart';
 import 'package:stage_mgt_app/components/my_button.dart';
 import 'package:stage_mgt_app/components/my_textfield.dart';
+import 'package:stage_mgt_app/pages/home_page.dart';
 import 'package:stage_mgt_app/pages/register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,8 +16,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final userNameController = TextEditingController();
+  final email = TextEditingController();
   final passwordController = TextEditingController();
+  UserService userService = UserService();
 
   void wrongEmailOrPassword() {
     showDialog(
@@ -85,18 +88,36 @@ class _LoginPageState extends State<LoginPage> {
 
     // Try login
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: userNameController.text,
-        password: passwordController.text,
+      user_model.User? user = await userService.loginUser(
+        email.text,
+        passwordController.text,
       );
       Navigator.pop(context); // This removes the loading dialog on success
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context); // This removes the loading dialog on error
 
-      if (e.code == 'invalid-credential' || e.code == 'wrong-password') {
-        wrongEmailOrPassword();
+      if (user != null) {
+        print("User object found");
+        print(user);
+        // Navigate to the Home page
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ));
+      } else {
+        wrongEmailOrPassword(); // If login fails, show an error
       }
+    } catch (e) {
+      Navigator.pop(context); // Close the loading dialog on error
+      wrongEmailOrPassword();
     }
+
+    // on FirebaseAuthException catch (e) {
+    //   Navigator.pop(context); // This removes the loading dialog on error
+
+    //   if (e.code == 'invalid-credential' || e.code == 'wrong-password') {
+    //     wrongEmailOrPassword();
+    //   }
+    // }
   }
 
   @override
@@ -131,8 +152,8 @@ class _LoginPageState extends State<LoginPage> {
               ),
               // Username textfield
               MyTextField(
-                controller: userNameController,
-                hintText: 'Username',
+                controller: email,
+                hintText: 'Email',
                 obscureText: false,
               ),
               const SizedBox(

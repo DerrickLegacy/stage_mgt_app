@@ -7,8 +7,8 @@ import 'package:stage_mgt_app/pages/notification/notification_page.dart';
 import 'package:stage_mgt_app/pages/profile/profile_page.dart';
 
 class AppDrawer extends StatelessWidget {
-  AppDrawer({super.key});
-  final loggedInUser = FirebaseAuth.instance.currentUser!;
+  const AppDrawer({super.key});
+  final loggedInUser = "Derrick";
 
   @override
   Widget build(BuildContext context) {
@@ -22,30 +22,23 @@ class AppDrawer extends StatelessWidget {
               style: TextStyle(color: Colors.black),
             ),
             accountEmail: Text(
-              loggedInUser.email ?? "No Email", // User's email or fallback
+              loggedInUser, // User's email or fallback
               style: const TextStyle(color: Colors.black),
             ),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: loggedInUser.photoURL != null
-                    ? Image.network(
-                        loggedInUser.photoURL!,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.asset(
-                        'lib/images/icons8-google-240.png', // Default image
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                      ),
+                child: Image.asset(
+                  'lib/images/icons8-google-240.png', // Default image
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xff673ab7),
+                  Color(0xFF30475E),
                   Color(0xffd1c4e9),
                 ],
                 stops: [0.0, 1.0],

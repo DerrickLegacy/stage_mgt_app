@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stage_mgt_app/components/imageSquareTitle.dart';
+import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/components/my_button.dart';
 import 'package:stage_mgt_app/components/my_textfield.dart';
 import 'package:stage_mgt_app/pages/login_page.dart';
@@ -12,14 +12,44 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-void registerUser() {}
-
 class _RegisterPageState extends State<RegisterPage> {
-  final userNameController = TextEditingController();
-  final passwordController = TextEditingController();
-  final phoneNumberController = TextEditingController();
-  final addressController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  @override
+  void dispose() {
+    userNameController.dispose();
+    passwordController.dispose();
+    phoneNumberController.dispose();
+    addressController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> registerUser() async {
+    UserService userService = UserService();
+    Map<String, dynamic> userDetails = {
+      "username": userNameController.text,
+      "phoneNumber": phoneNumberController.text,
+      "address": addressController.text,
+      "password": passwordController.text,
+      "email": emailController.text,
+      // Make sure to include other fields if necessary
+    };
+
+    // Call registerUser on StageBookingService with the userDetails map
+    try {
+      await userService.registerUser(userDetails);
+      print("User registered successfully!");
+    } catch (e) {
+      print("Error registering user: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +81,12 @@ class _RegisterPageState extends State<RegisterPage> {
               MyTextField(
                 controller: userNameController,
                 hintText: 'Username',
+                obscureText: false,
+              ),
+              const SizedBox(height: 25.0),
+              MyTextField(
+                controller: emailController,
+                hintText: 'Email',
                 obscureText: false,
               ),
               const SizedBox(height: 25.0),
@@ -89,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // Register Button
               MyButton(
-                onTap: () => registerUser(),
+                onTap: registerUser,
                 title: 'Register',
               ),
               const SizedBox(height: 40.0),

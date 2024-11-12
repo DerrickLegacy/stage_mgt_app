@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/pages/home_page.dart';
 import 'package:stage_mgt_app/pages/login_page.dart';
 
@@ -9,13 +9,17 @@ class AuthPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
+      body: FutureBuilder<bool>(
+        future: UserService().checkUserSession(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return HomePage();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+
+          if (snapshot.hasData && snapshot.data == true) {
+            return HomePage(); // User is logged in, show HomePage
           } else {
-            return const LoginPage();
+            return const LoginPage(); // No user session, show LoginPage
           }
         },
       ),

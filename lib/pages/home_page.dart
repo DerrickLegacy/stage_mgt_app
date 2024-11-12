@@ -1,49 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:stage_mgt_app/components/drawer.dart';
-import 'package:stage_mgt_app/components/loyaltycard.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
-  final loggedInUser = FirebaseAuth.instance.currentUser!;
+  final loggedInUser = "Derrick";
 
   void signUserOut() {
     FirebaseAuth.instance.signOut();
   }
 
-  // Helper function to create a SliverToBoxAdapter widget
-  Widget buildUserInfoBox(String userEmail) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Container(
-          height: 250.0,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            color: Colors.white,
-          ),
-          child: Center(
-            child: Text(
-              "User is logged in as $userEmail",
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[100],
-      drawer: AppDrawer(),
+      backgroundColor: Colors.grey[100],
+      drawer: const AppDrawer(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -51,7 +23,7 @@ class HomePage extends StatelessWidget {
               return IconButton(
                 icon: const Icon(
                   Icons.menu,
-                  color: Colors.white,
+                  color: Color(0xFFCBAF87),
                 ),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
@@ -62,26 +34,48 @@ class HomePage extends StatelessWidget {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(color: Colors.deepPurple),
-              title: Row(
+              background: Container(color: const Color(0xFF30475E)),
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const Row(children: [
-                    Text(
-                      "App Name",
-                      style: TextStyle(
-                        color: Colors.white,
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            "Taxi App",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          //sub title
+                          Text(
+                            "\"With you, to the end of the world we sail\"",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontStyle: FontStyle.italic),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 8), // Spacing between name and image,
+                  // Image Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'lib/images/taxi.jpeg', // Your image
+                        width: 120,
+                        height: 100,
+                        fit: BoxFit.cover,
                       ),
-                    ),
-                    Row(
-                      children: [],
-                    )
-                  ]),
-                  Image.asset(
-                    'lib/images/icons8-google-240.png', // Default image
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
-                  )
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -109,128 +103,7 @@ class HomePage extends StatelessWidget {
             ],
             expandedHeight: 350.0,
           ),
-          SliverToBoxAdapter(
-            child: _buildInfoCard2(
-              "User is logged in as ${loggedInUser.email}",
-              "Derrick Legacy", // User location
-              '', // Path to the avatar image
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: LoyaltyBalanceCard(),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                height: 250.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    "User is logged in as ${loggedInUser.email}",
-                    style: const TextStyle(fontSize: 18, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                height: 250.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    "User is logged in as ${loggedInUser.email}",
-                    style: const TextStyle(fontSize: 18, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard2(String name, String location, String avatarUrl) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Container(
-        height: 80.0, // Adjust height as needed
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 2,
-              blurRadius: 8,
-              offset: const Offset(0, 2), // Shadow position
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Row(
-            children: [
-              // Avatar
-              CircleAvatar(
-                radius: 30, // Adjust the size as needed
-                backgroundImage: AssetImage(avatarUrl), // Avatar image
-              ),
-              const SizedBox(width: 15),
-              // User Information
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      location,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Icons (Bell and Settings)
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  // Notification icon action
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () {
-                  // Settings icon action
-                },
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
