@@ -8,7 +8,7 @@ class NotificationPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notifications'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blueAccent[700],
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
@@ -51,7 +51,7 @@ class NotificationCard extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
         leading: CircleAvatar(
-          backgroundColor: isNew ? Colors.deepPurple : Colors.grey.shade300,
+          backgroundColor: isNew ? Colors.blueAccent : Colors.grey.shade300,
           child: Icon(
             isNew ? Icons.notifications_active : Icons.notifications_none,
             color: Colors.white,
@@ -61,7 +61,7 @@ class NotificationCard extends StatelessWidget {
           title,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: isNew ? Colors.deepPurple : Colors.black87,
+            color: isNew ? Colors.blueAccent : Colors.black87,
           ),
         ),
         subtitle: Padding(

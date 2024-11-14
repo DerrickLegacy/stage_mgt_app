@@ -14,7 +14,7 @@ class User {
     required this.password,
     required this.phoneNumber,
     required this.address,
-    required this.userType,
+    this.userType = '0',
   });
 
   // Convert User object to a map for Firestore
@@ -39,7 +39,7 @@ class User {
       password: data['password'] ?? '',
       phoneNumber: data['phoneNumber'] ?? '',
       address: data['address'] ?? '',
-      userType: data['userType'] ?? '0',
+      userType: data['userType'].toString(), // Ensure userType is a string
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stage_mgt_app/backend/ErrorMessage/error_handle.dart';
-import 'package:stage_mgt_app/backend/controllers/user_controller.dart';
+import 'package:stage_mgt_app/backend/interfaces/user_controller.dart';
 import 'package:stage_mgt_app/backend/models/user.dart';
 
 class UserService implements UserController {
@@ -33,6 +33,7 @@ class UserService implements UserController {
 
   @override
   Future<User?> loginUser(String email, String password) async {
+    print("$email - $password");
     try {
       var userSnapshot =
           await _db.collection("users").where("email", isEqualTo: email).get();
@@ -45,13 +46,21 @@ class UserService implements UserController {
           String userId = userSnapshot.docs.first.id;
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.clear();
+
           prefs.setString('userId', userId);
           prefs.setString('email', user['email']);
           prefs.setString('username', user['username']);
-          prefs.setString('phoneNumber', user['phoneNumber']);
-          prefs.setString('address', user['address']);
-          prefs.setString('userType', user['userType']);
+          prefs.setString('phoneNumber', user['phoneNumber'].toString());
+          prefs.setString('address', user['address'].toString());
+
+          // Ensure userType is stored as a string
+          String userTypeString = user['userType'].toString();
+          prefs.setString('userType', userTypeString);
           prefs.setBool('isLoggedIn', true);
+
+          print(
+              "All fields stored in SharedPreferences. Proceeding to create User object...");
 
           return User.fromMap(user);
         } else {

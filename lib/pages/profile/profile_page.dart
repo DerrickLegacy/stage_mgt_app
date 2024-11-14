@@ -63,8 +63,8 @@ class _AccountState extends State<Account> {
           setState(() {
             _usernameController.text = user.username;
             _emailController.text = user.email;
-            _phoneNumberController.text = user.phoneNumber ?? '';
-            _addressController.text = user.address ?? '';
+            _phoneNumberController.text = user.phoneNumber;
+            _addressController.text = user.address;
           });
         }
       } catch (e) {

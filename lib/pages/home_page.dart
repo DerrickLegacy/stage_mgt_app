@@ -24,80 +24,52 @@ class HomePage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: Builder(builder: (context) {
-              return IconButton(
-                icon: const Icon(
-                  Icons.menu,
-                  color: Color(0xFFCBAF87),
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              );
-            }),
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(color: const Color(0xFF30475E)),
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'lib/images/taxi.jpeg', // Your image
-                        width: 120,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ],
-                  ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            "Taxi App",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ],
+              centerTitle: true,
+              title: const Text(
+                "Taxi App",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26.0,
+                ),
               ),
+              background: Image.asset(
+                'lib/images/tobias-a-muller-rOLKpojjbGM-unsplash.jpg',
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+            expandedHeight: 230,
+            backgroundColor: Colors.blueAccent[400],
+            iconTheme: const IconThemeData(
+              color: Colors.white,
             ),
             actions: <Widget>[
               IconButton(
-                icon: const Icon(
-                  Icons.face,
-                  color: Colors.white,
-                ),
+                icon: const Icon(Icons.face),
+                color: Colors.white,
                 tooltip: 'My Profile',
-                onPressed: () {
-                  // Add Profile Logic Here
-                },
+                onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(
-                  Icons.logout,
-                  color: Colors.white,
-                ),
-                tooltip: 'Actions',
+                icon: const Icon(Icons.logout),
+                color: Colors.white,
+                tooltip: 'Log Out Icon',
                 onPressed: () {
                   signUserOut(context);
                 },
               ),
             ],
-            expandedHeight: 350.0,
           ),
+          // Add other Sliver widgets here as needed
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.black,
+        onPressed: () {},
+        child: const Icon(Icons.add),
       ),
     );
   }
