@@ -56,42 +56,45 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              loggedInUser, // Display dynamic name or fallback
-              style: const TextStyle(color: Colors.black),
-            ),
-            accountEmail: Text(
-              userEmail, // Display dynamic email or fallback
-              style: const TextStyle(color: Colors.black),
-            ),
-            currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                child: Image.asset(
-                  'lib/images/icons8-google-240.png', // Default image
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.cover,
+      child: Container(
+        color: Colors.blueAccent.withOpacity(0.1),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(
+                loggedInUser, // Display dynamic name or fallback
+                style: const TextStyle(color: Colors.black),
+              ),
+              accountEmail: Text(
+                userEmail, // Display dynamic email or fallback
+                style: const TextStyle(color: Colors.black),
+              ),
+              currentAccountPicture: CircleAvatar(
+                child: ClipOval(
+                  child: Image.asset(
+                    'lib/images/icons8-google-240.png', // Default image
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue,
+                    Color(0xffd1c4e9),
+                  ],
+                  stops: [0.0, 1.0],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
             ),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.blue,
-                  Color(0xffd1c4e9),
-                ],
-                stops: [0.0, 1.0],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-          ),
-          ...buildDrawerItems(context),
-        ],
+            ...buildDrawerItems(context),
+          ],
+        ),
       ),
     );
   }

@@ -21,49 +21,52 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       drawer: const AppDrawer(),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: const Text(
-                "Taxi App",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26.0,
+      body: Container(
+        color: Colors.blueAccent.withOpacity(0.1),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: const Text(
+                  "Taxi App",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26.0,
+                  ),
+                ),
+                background: Image.asset(
+                  'lib/images/tobias-a-muller-rOLKpojjbGM-unsplash.jpg',
+                  fit: BoxFit.fitWidth,
                 ),
               ),
-              background: Image.asset(
-                'lib/images/tobias-a-muller-rOLKpojjbGM-unsplash.jpg',
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-            expandedHeight: 230,
-            backgroundColor: Colors.blueAccent[400],
-            iconTheme: const IconThemeData(
-              color: Colors.white,
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.face),
+              expandedHeight: 230,
+              backgroundColor: Colors.blueAccent[400],
+              iconTheme: const IconThemeData(
                 color: Colors.white,
-                tooltip: 'My Profile',
-                onPressed: () {},
               ),
-              IconButton(
-                icon: const Icon(Icons.logout),
-                color: Colors.white,
-                tooltip: 'Log Out Icon',
-                onPressed: () {
-                  signUserOut(context);
-                },
-              ),
-            ],
-          ),
-          // Add other Sliver widgets here as needed
-        ],
+              actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.face),
+                  color: Colors.white,
+                  tooltip: 'My Profile',
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  color: Colors.white,
+                  tooltip: 'Log Out Icon',
+                  onPressed: () {
+                    signUserOut(context);
+                  },
+                ),
+              ],
+            ),
+            // Add other Sliver widgets here as needed
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
