@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stage_mgt_app/backend/models/user.dart';
 import 'package:stage_mgt_app/backend/services/user_service.dart';
-import 'package:stage_mgt_app/pages/booking/booking_main.dart';
+import 'package:stage_mgt_app/pages/booking/add_booking.dart';
+import 'package:stage_mgt_app/pages/booking/history_page.dart';
+import 'package:stage_mgt_app/pages/booking/upcoming_booking.dart';
 import 'package:stage_mgt_app/pages/contact_us/contact_us.dart';
 import 'package:stage_mgt_app/pages/loyalty_points/loyalty_points.dart';
 import 'package:stage_mgt_app/pages/notification/notification_page.dart';
@@ -37,7 +39,6 @@ class _AppDrawerState extends State<AppDrawer> {
           loggedInUser = useradd!.username;
           userEmail = useradd.email;
         });
-        print(loggedInUser);
       } catch (e) {
         setState(() {
           loggedInUser = 'Error loading user';
@@ -89,7 +90,6 @@ class _AppDrawerState extends State<AppDrawer> {
               ),
             ),
           ),
-          // Drawer items list
           ...buildDrawerItems(context),
         ],
       ),
@@ -99,11 +99,38 @@ class _AppDrawerState extends State<AppDrawer> {
   // Method to create and return the list of drawer items
   List<Widget> buildDrawerItems(BuildContext context) {
     return [
-      buildDrawerItem(
-        context,
-        icon: Icons.home,
-        text: 'Bookings',
-        page: const Booking(),
+      ExpansionTile(
+        leading: Icon(
+          Icons.home,
+          color: Colors.lightBlue[700],
+        ),
+        title: const Text(
+          'Bookings',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        children: [
+          buildDrawerSubItem(
+            context,
+            icon: Icons.flight_takeoff_outlined,
+            text: 'Upcoming Bookings',
+            page: const UpcomingBookings(), // Replace with relevant page
+          ),
+          buildDrawerSubItem(
+            context,
+            icon: Icons.add,
+            text: 'New Booking',
+            page: const CreateBooking(),
+          ),
+          buildDrawerSubItem(
+            context,
+            icon: Icons.history,
+            text: 'Booking History',
+            page: const BookingHistoryPage(), // Replace with relevant page
+          )
+        ],
       ),
       buildDrawerItem(
         context,
@@ -171,6 +198,27 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             }
           },
+    );
+  }
+
+  // Helper method to build sub-items under an ExpansionTile
+  Widget buildDrawerSubItem(BuildContext context,
+      {required IconData icon, required String text, required Widget page}) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: Colors.lightBlue[500],
+      ),
+      title: Text(
+        text,
+        style: const TextStyle(fontSize: 14),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
+      },
     );
   }
 }

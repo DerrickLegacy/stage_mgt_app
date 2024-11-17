@@ -65,7 +65,8 @@ class _BookingState extends State<Booking> {
       distance: '',
       travelTime: "4:00 pm",
       emailAddress: await getUserProperty("email"),
-      contactNumber: await getUserProperty("phoneNumber"),
+      contactNumber: await getUserProperty("phoneNumber"), cardNumber: '',
+      cvc: '',
     );
 
     try {
@@ -111,27 +112,34 @@ class _BookingState extends State<Booking> {
     }
   }
 
+  Future<void> loadTravelHistory() async {
+    try {
+      List<BookingModel> historyBookings = await bookingService
+          .getTravelHistory(await getUserProperty("userId"));
+      // print("Here....we go::::::::");
+      // inspect(historyBookings);
+      if (historyBookings.isNotEmpty) {
+        setState(() {
+          travelHistory.clear();
+          historyBookings.forEach((booking) {
+            travelHistory.add({
+              "Index": "${historyBookings.indexOf(booking) + 1}",
+              "Date": "${booking.travelDate}",
+              "From": "${booking.from}",
+              "To": "${booking.to}",
+            });
+          });
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading travel history: $e')),
+      );
+    }
+  }
+
   // Sample data for history
-  final List<Map<String, String>> travelHistory = [
-    {
-      "Index": "1",
-      "Date": "2024-01-01",
-      "From": "Kampala",
-      "To": "Nairobi",
-    },
-    {
-      "Index": "2",
-      "Date": "2024-02-15",
-      "From": "Entebbe",
-      "To": "Dar es Salaam",
-    },
-    {
-      "Index": "3",
-      "Date": "2024-03-10",
-      "From": "Jinja",
-      "To": "Kigali",
-    },
-  ];
+  final List<Map<String, String>> travelHistory = [];
 
 // Function to show the DatePickerDialog
   Future<void> _selectDate(BuildContext context) async {
@@ -211,7 +219,8 @@ class _BookingState extends State<Booking> {
   @override
   void initState() {
     super.initState();
-    loadUpcomingTravels(); // Call the function when the widget is created
+    loadUpcomingTravels();
+    loadTravelHistory();
   }
 
   @override
@@ -519,7 +528,7 @@ class _BookingState extends State<Booking> {
                             child: Text(
                               "${travelHistory.length} trips",
                               style: const TextStyle(
-                                color: Colors.white70,
+                                color: Colors.orange,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
