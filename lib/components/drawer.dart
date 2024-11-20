@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stage_mgt_app/backend/models/notification.dart';
 import 'package:stage_mgt_app/backend/models/user.dart';
+import 'package:stage_mgt_app/backend/services/notification_service.dart';
 import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/pages/booking/add_booking.dart';
 import 'package:stage_mgt_app/pages/booking/history_page.dart';
 import 'package:stage_mgt_app/pages/booking/upcoming_booking.dart';
 import 'package:stage_mgt_app/pages/contact_us/contact_us.dart';
 import 'package:stage_mgt_app/pages/loyalty_points/loyalty_points.dart';
+import 'package:stage_mgt_app/pages/management/support_requests.dart';
 import 'package:stage_mgt_app/pages/notification/notification_page.dart';
 import 'package:stage_mgt_app/pages/profile/profile_page.dart';
 
@@ -18,13 +21,16 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  String loggedInUser = "Loading..."; // Placeholder text for username
-  String userEmail = "Loading..."; // Placeholder text for email
+  String loggedInUser = "Loading...";
+  String userEmail = "Loading...";
+  int notificationCount = 0; // Notification count state
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
     super.initState();
     _loadUserDetails();
+    _loadNotificationCount();
   }
 
   void _loadUserDetails() async {
@@ -53,6 +59,27 @@ class _AppDrawerState extends State<AppDrawer> {
     }
   }
 
+  Future<void> _loadNotificationCount() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    final String userId = pref.getString('userId') ?? '';
+
+    if (userId.isNotEmpty) {
+      try {
+        List<NotificationModel> notifications =
+            await _notificationService.getNotifications(userId);
+
+        setState(() {
+          notificationCount =
+              notifications.where((notification) => notification.isNew).length;
+        });
+      } catch (e) {
+        setState(() {
+          notificationCount = 0;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -63,17 +90,17 @@ class _AppDrawerState extends State<AppDrawer> {
           children: [
             UserAccountsDrawerHeader(
               accountName: Text(
-                loggedInUser, // Display dynamic name or fallback
+                loggedInUser,
                 style: const TextStyle(color: Colors.black),
               ),
               accountEmail: Text(
-                userEmail, // Display dynamic email or fallback
+                userEmail,
                 style: const TextStyle(color: Colors.black),
               ),
               currentAccountPicture: CircleAvatar(
                 child: ClipOval(
                   child: Image.asset(
-                    'lib/images/icons8-google-240.png', // Default image
+                    'lib/images/icons8-google-240.png',
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
@@ -99,7 +126,6 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  // Method to create and return the list of drawer items
   List<Widget> buildDrawerItems(BuildContext context) {
     return [
       ExpansionTile(
@@ -119,7 +145,7 @@ class _AppDrawerState extends State<AppDrawer> {
             context,
             icon: Icons.flight_takeoff_outlined,
             text: 'Upcoming Bookings',
-            page: const UpcomingBookings(), // Replace with relevant page
+            page: const UpcomingBookings(),
           ),
           buildDrawerSubItem(
             context,
@@ -131,7 +157,7 @@ class _AppDrawerState extends State<AppDrawer> {
             context,
             icon: Icons.history,
             text: 'Booking History',
-            page: const BookingHistoryPage(), // Replace with relevant page
+            page: const BookingHistoryPage(),
           )
         ],
       ),
@@ -144,7 +170,8 @@ class _AppDrawerState extends State<AppDrawer> {
       buildDrawerItem(
         context,
         icon: Icons.notifications_active,
-        text: 'Notifications',
+        text:
+            'Notifications (${notificationCount > 0 ? notificationCount : 0})',
         page: const NotificationPage(),
       ),
       const Divider(),
@@ -153,6 +180,34 @@ class _AppDrawerState extends State<AppDrawer> {
         icon: Icons.contact_support,
         text: 'Support Contact Us',
         page: const ContactSupport(),
+      ),
+      const Divider(),
+      ExpansionTile(
+        leading: Icon(
+          Icons.mark_unread_chat_alt,
+          color: Colors.lightBlue[700],
+        ),
+        title: const Text(
+          'Management',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        children: [
+          buildDrawerSubItem(
+            context,
+            icon: Icons.contact_support_outlined,
+            text: 'Support Requests.',
+            page: const ClientSupportRequests(),
+          ),
+          buildDrawerSubItem(
+            context,
+            icon: Icons.add,
+            text: 'Add Vehicle',
+            page: const CreateBooking(),
+          ),
+        ],
       ),
       const Divider(),
       buildDrawerItem(
@@ -168,13 +223,12 @@ class _AppDrawerState extends State<AppDrawer> {
         icon: Icons.exit_to_app,
         text: 'Exit',
         onTap: () {
-          Navigator.pop(context); // Close the drawer
+          Navigator.pop(context);
         },
       ),
     ];
   }
 
-  // Helper method to build individual drawer items
   Widget buildDrawerItem(BuildContext context,
       {required IconData icon,
       required String text,
@@ -204,7 +258,6 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  // Helper method to build sub-items under an ExpansionTile
   Widget buildDrawerSubItem(BuildContext context,
       {required IconData icon, required String text, required Widget page}) {
     return ListTile(

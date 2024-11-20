@@ -16,21 +16,40 @@ class _ContactSupportState extends State<ContactSupport> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController emailAddressController = TextEditingController();
   final TextEditingController messageController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
 
   final ContactUsService contactService = ContactUsService();
 
-  Future<void> sendMessage() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    var userId = pref.getString('userId') ?? '';
+  @override
+  void initState() {
+    super.initState();
+    _loadUserDetails();
+  }
 
+  // Load user details (phone number and email) from SharedPreferences
+  Future<void> _loadUserDetails() async {
+    final String phoneNumber = await getUserProperty("phoneNumber");
+    final String email = await getUserProperty("email");
+
+    phoneNumberController.text = phoneNumber;
+    emailAddressController.text = email;
+  }
+
+  Future<void> sendMessage() async {
     var messageDetails = {
-      'userId': userId,
+      'userId': await getUserProperty("userId"),
       'phoneNumber': phoneNumberController.text,
       'emailAddress': emailAddressController.text,
       'message': messageController.text,
+      'title': titleController.text,
     };
 
     await contactService.sendMessage(messageDetails);
+  }
+
+  Future<String> getUserProperty(String property) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString(property) ?? '';
   }
 
   @override
@@ -46,11 +65,13 @@ class _ContactSupportState extends State<ContactSupport> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Phone Number Field (Read-Only)
               TextFormField(
                 controller: phoneNumberController,
+                enabled: false, // Make it read-only
                 decoration: const InputDecoration(
                   labelText: "Contact Number",
-                  hintText: "Enter Contact Number",
+                  hintText: "Your Contact Number",
                   prefixIcon: Icon(Icons.phone, color: Colors.blueAccent),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
@@ -59,11 +80,14 @@ class _ContactSupportState extends State<ContactSupport> {
                 ),
               ),
               const SizedBox(height: 10.0),
+
+              // Email Address Field (Read-Only)
               TextFormField(
                 controller: emailAddressController,
+                enabled: false, // Make it read-only
                 decoration: const InputDecoration(
                   labelText: "Email Address",
-                  hintText: "Enter Email Address",
+                  hintText: "Your Email Address",
                   prefixIcon: Icon(Icons.email, color: Colors.blueAccent),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
@@ -74,6 +98,25 @@ class _ContactSupportState extends State<ContactSupport> {
                 ),
               ),
               const SizedBox(height: 10.0),
+
+              // Title Field
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: "Title",
+                  hintText: "Request Title",
+                  prefixIcon: Icon(Icons.email, color: Colors.blueAccent),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Message Field
               TextField(
                 controller: messageController,
                 maxLines: 5,
@@ -92,21 +135,23 @@ class _ContactSupportState extends State<ContactSupport> {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Submit Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
                     onPressed: () async {
                       await sendMessage();
-                      // Optionally, display a success message or navigate to another page
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Message sent successfully!')),
                       );
 
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AppDrawer()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AppDrawer()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
@@ -120,7 +165,7 @@ class _ContactSupportState extends State<ContactSupport> {
                       ),
                     ),
                     child: const Text("Submit"),
-                  )
+                  ),
                 ],
               ),
             ],
