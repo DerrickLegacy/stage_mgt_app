@@ -1,82 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stage_mgt_app/backend/models/notification.dart';
+import 'package:stage_mgt_app/backend/services/notification_service.dart';
+import 'package:stage_mgt_app/components/notification_card.dart';
 
-class NotificationPage extends StatelessWidget {
+// Notification Page
+class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
+
+  @override
+  _NotificationPageState createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
+  late Future<List<NotificationModel>> _notificationsFuture;
+  final NotificationService _notificationService = NotificationService();
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationsFuture = _getUserNotifications();
+  }
+
+  // Fetch a user property from SharedPreferences
+  Future<String> getUserProperty(String property) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString(property) ?? '';
+  }
+
+  // Fetch notifications for the current user
+  Future<List<NotificationModel>> _getUserNotifications() async {
+    final String userId = await getUserProperty('userId');
+    return _notificationService.getNotifications(userId);
+  }
+
+  Future<void> markRead(String docId) async {
+    if (docId.isEmpty) {
+      print("Error: docId is empty");
+      return;
+    }
+
+    print("Marking: $docId as read");
+    try {
+      await _notificationService.markAsRead(docId);
+      setState(() {
+        _notificationsFuture = _getUserNotifications();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Notification Marked as Read successfully")));
+    } catch (e) {
+      print("Error deleting notification: $e");
+    }
+  }
+
+  // Delete a specific notification by ID
+  Future<void> deleteNotification(String docId) async {
+    if (docId.isEmpty) {
+      print("Error: docId is empty");
+      return;
+    }
+
+    print("Deleting notification with docId: $docId");
+    try {
+      await _notificationService.deleteNotification(docId);
+      setState(() {
+        _notificationsFuture = _getUserNotifications();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Notification Deleted successfully")));
+    } catch (e) {
+      print("Error deleting notification: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notifications'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blueAccent[700],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: 10, // Number of notifications
-        itemBuilder: (context, index) {
-          return NotificationCard(
-            title: "Ride Update",
-            message: "Your driver is 5 minutes away. Get ready!",
-            time: "${index + 1}h ago",
-            isNew: index % 2 == 0, // Alternate between new and read
+      body: FutureBuilder<List<NotificationModel>>(
+        future: _notificationsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text("Error loading notifications"));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No notifications available"));
+          }
+
+          final notifications = snapshot.data!;
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: notifications.length,
+            itemBuilder: (context, index) {
+              final notification = notifications[index];
+              return NotificationCard(
+                notification: notification,
+                onDelete: () => deleteNotification(notification.docId),
+                onMarkAsRead: () => markRead(notification.docId),
+              );
+            },
           );
-        },
-      ),
-    );
-  }
-}
-
-class NotificationCard extends StatelessWidget {
-  final String title;
-  final String message;
-  final String time;
-  final bool isNew;
-
-  const NotificationCard({
-    super.key,
-    required this.title,
-    required this.message,
-    required this.time,
-    this.isNew = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,
-      margin: const EdgeInsets.symmetric(vertical: 10.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16.0),
-        leading: CircleAvatar(
-          backgroundColor: isNew ? Colors.deepPurple : Colors.grey.shade300,
-          child: Icon(
-            isNew ? Icons.notifications_active : Icons.notifications_none,
-            color: Colors.white,
-          ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isNew ? Colors.deepPurple : Colors.black87,
-          ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            message,
-            style: const TextStyle(color: Colors.black54),
-          ),
-        ),
-        trailing: Text(
-          time,
-          style: const TextStyle(color: Colors.grey),
-        ),
-        onTap: () {
-          // Handle notification tap
         },
       ),
     );

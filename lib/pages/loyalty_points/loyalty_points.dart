@@ -8,11 +8,11 @@ class LoyaltyPoints extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Loyalty Points'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blue,
         elevation: 0,
       ),
       body: Container(
-        color: Colors.deepPurpleAccent.withOpacity(0.1),
+        color: Colors.blueAccent.withOpacity(0.1),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +34,7 @@ class LoyaltyPoints extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Colors.deepPurple),
+                            color: Colors.blue),
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -42,7 +42,7 @@ class LoyaltyPoints extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple.shade700),
+                            color: Colors.blue.shade700),
                       ),
                       const SizedBox(height: 10),
                       const Text(
@@ -66,7 +66,7 @@ class LoyaltyPoints extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+                color: Colors.blue,
               ),
             ),
             const SizedBox(height: 16.0),
@@ -106,7 +106,7 @@ class LoyaltyPoints extends StatelessWidget {
                     // Add redemption logic here
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40.0, vertical: 16.0),
                     shape: RoundedRectangleBorder(
@@ -141,7 +141,7 @@ class LoyaltyPoints extends StatelessWidget {
             Icon(
               icon,
               size: 40,
-              color: Colors.deepPurple,
+              color: Colors.blue,
             ),
             const SizedBox(width: 16),
             Expanded(

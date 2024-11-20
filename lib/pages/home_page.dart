@@ -1,14 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/components/drawer.dart';
+import 'package:stage_mgt_app/pages/login_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   final loggedInUser = "Derrick";
 
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
+  void signUserOut(BuildContext context) {
+    UserService service = UserService();
+
+    service
+        .logoutUser(); // Assuming this method properly logs out the user (e.g., clearing session, Firebase sign-out, etc.)
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   @override
@@ -16,94 +22,58 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       drawer: const AppDrawer(),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            leading: Builder(builder: (context) {
-              return IconButton(
-                icon: const Icon(
-                  Icons.menu,
-                  color: Color(0xFFCBAF87),
+      body: Container(
+        color: Colors.blueAccent.withOpacity(0.1),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: const Text(
+                  "Taxi App",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26.0,
+                  ),
                 ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              );
-            }),
-            // title: const Text("App Name"),
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(color: const Color(0xFF30475E)),
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            "Taxi App",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          //sub title
-                          Text(
-                            "\"With you, to the end of the world we sail\"",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontStyle: FontStyle.italic),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 8), // Spacing between name and image,
-                  // Image Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'lib/images/taxi.jpeg', // Your image
-                        width: 120,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ],
-                  ),
-                ],
+                background: Image.asset(
+                  'lib/images/tobias-a-muller-rOLKpojjbGM-unsplash.jpg',
+                  fit: BoxFit.fitWidth,
+                ),
               ),
+              expandedHeight: 230,
+              backgroundColor: Colors.blueAccent[400],
+              iconTheme: const IconThemeData(
+                color: Colors.white,
+              ),
+              actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.face),
+                  color: Colors.white,
+                  tooltip: 'My Profile',
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  color: Colors.white,
+                  tooltip: 'Log Out Icon',
+                  onPressed: () {
+                    signUserOut(context);
+                  },
+                ),
+              ],
             ),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(
-                  Icons.face,
-                  color: Colors.white,
-                ),
-                tooltip: 'My Profile',
-                onPressed: () {
-                  // Add Profile Logic Here
-                },
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.logout,
-                  color: Colors.white,
-                ),
-                tooltip: 'Actions',
-                onPressed: () {
-                  signUserOut();
-                },
-              ),
-            ],
-            expandedHeight: 350.0,
-          ),
-        ],
+            // Add other Sliver widgets here as needed
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.black,
+        onPressed: () {},
+        child: const Icon(Icons.add),
       ),
     );
   }

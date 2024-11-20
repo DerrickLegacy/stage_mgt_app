@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stage_mgt_app/backend/ErrorMessage/error_handle.dart';
-import 'package:stage_mgt_app/backend/controllers/user_controller.dart';
+import 'package:stage_mgt_app/backend/interfaces/user_controller.dart';
 import 'package:stage_mgt_app/backend/models/user.dart';
 
 class UserService implements UserController {
@@ -14,24 +14,54 @@ class UserService implements UserController {
   }
 
   @override
-  Future<void> getUserDetails(String userId) {
-    // TODO: implement getUserDetails
-    throw UnimplementedError();
+  Future<User?> getUserDetails(String userId) async {
+    try {
+      var userSnapshot = await _db.collection("users").doc(userId).get();
+
+      if (userSnapshot.exists) {
+        final data = userSnapshot.data() as Map<String, dynamic>;
+        return User.fromMap(data);
+      } else {
+        print("User not found");
+        return null;
+      }
+    } catch (e) {
+      print("Error getting document: $e");
+      return null;
+    }
   }
 
   @override
   Future<User?> loginUser(String email, String password) async {
+    print("$email - $password");
     try {
       var userSnapshot =
           await _db.collection("users").where("email", isEqualTo: email).get();
-      var user = userSnapshot.docs.first.data();
 
-      print(userSnapshot);
       if (userSnapshot.docs.isNotEmpty) {
         var user = userSnapshot.docs.first.data();
         String storedPassword = user['password'];
 
         if (storedPassword == password) {
+          String userId = userSnapshot.docs.first.id;
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.clear();
+
+          prefs.setString('userId', userId);
+          prefs.setString('email', user['email']);
+          prefs.setString('username', user['username']);
+          prefs.setString('phoneNumber', user['phoneNumber'].toString());
+          prefs.setString('address', user['address'].toString());
+
+          // Ensure userType is stored as a string
+          String userTypeString = user['userType'].toString();
+          prefs.setString('userType', userTypeString);
+          prefs.setBool('isLoggedIn', true);
+
+          print(
+              "All fields stored in SharedPreferences. Proceeding to create User object...");
+
           return User.fromMap(user);
         } else {
           print('Invalid password');
@@ -47,10 +77,36 @@ class UserService implements UserController {
     }
   }
 
+// Fetch the cached user details from SharedPreferences (for offline login)
+  Future<User?> getCachedUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Retrieve stored user details from SharedPreferences
+    String? userId = prefs.getString('userId');
+    if (userId != null) {
+      return User(
+        userId: userId, // Use the cached userId
+        email: prefs.getString('email') ?? '',
+        username: prefs.getString('username') ?? '',
+        password: '', // Optionally store the password or leave it empty
+        phoneNumber: prefs.getString('phoneNumber') ?? '',
+        address: prefs.getString('address') ?? '',
+        userType: prefs.getString('userType') ?? '0',
+      );
+    }
+    return null; // No cached user found
+  }
+
   @override
   Future<void> registerUser(Map<String, dynamic> userDetails) async {
     try {
-      await _db.collection("users").add(userDetails);
+      var userRef = await _db.collection("users").add(userDetails);
+      String userId = userRef.id;
+      await userRef.update({
+        'userId': userId,
+        'userType': 0,
+      });
+      print('User registered with userId: $userId');
     } catch (e) {
       throw ErrorMessage(
           errorMessage: '"User registration failed"', error: '$e');
@@ -58,9 +114,15 @@ class UserService implements UserController {
   }
 
   @override
-  Future<void> updateUserAccount(String id, Map<String, dynamic> userData) {
-    // TODO: implement updateUserAccount
-    throw UnimplementedError();
+  Future<void> updateUserAccount(
+      String userId, Map<String, dynamic> userData) async {
+    try {
+      var userRef = _db.collection("users").doc(userId);
+      await userRef.update(userData);
+      print('User records updated.');
+    } catch (e) {
+      throw Exception('User update failed: $e');
+    }
   }
 
   @override
@@ -70,8 +132,8 @@ class UserService implements UserController {
   }
 
   @override
-  Future<void> logoutUser() {
-    // TODO: implement logoutUser
-    throw UnimplementedError();
+  Future<void> logoutUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', false);
   }
 }

@@ -46,6 +46,12 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       await userService.registerUser(userDetails);
       print("User registered successfully!");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
     } catch (e) {
       print("Error registering user: $e");
     }
