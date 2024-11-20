@@ -28,6 +28,8 @@ class _AppDrawerState extends State<AppDrawer> {
   int notificationCount = 0;
   int clientRequestCount = 0;
 
+  late String userType = '';
+
   final NotificationService _notificationService = NotificationService();
   final ContactUsService _contactUsService = ContactUsService();
 
@@ -37,6 +39,7 @@ class _AppDrawerState extends State<AppDrawer> {
     _loadUserDetails();
     _loadNotificationCount();
     _loadClientRequestCount(); // Fetch client requests count
+    getUserType();
   }
 
   void _loadUserDetails() async {
@@ -63,6 +66,20 @@ class _AppDrawerState extends State<AppDrawer> {
         userEmail = 'No email available';
       });
     }
+  }
+
+  // Fetch a user property from SharedPreferences
+  Future<String> getUserProperty(String property) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString(property) ?? '';
+  }
+
+  Future<void> getUserType() async {
+    String fetchedUserType = await getUserProperty("userType");
+    setState(() {
+      userType = fetchedUserType;
+    });
+    print(userType);
   }
 
   Future<void> _loadNotificationCount() async {
@@ -209,35 +226,36 @@ class _AppDrawerState extends State<AppDrawer> {
         text: 'Support Contact Us',
         page: const ContactSupport(),
       ),
-      const Divider(),
-      ExpansionTile(
-        leading: Icon(
-          Icons.mark_unread_chat_alt,
-          color: Colors.lightBlue[700],
+      if (userType == '1') const Divider(),
+      if (userType == '1')
+        ExpansionTile(
+          leading: Icon(
+            Icons.mark_unread_chat_alt,
+            color: Colors.lightBlue[700],
+          ),
+          title: const Text(
+            'Management',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          children: [
+            buildDrawerSubItem(
+              context,
+              icon: Icons.contact_support_outlined,
+              text:
+                  'Support Requests (${clientRequestCount > 0 ? clientRequestCount : 0})',
+              page: const ClientSupportRequests(),
+            ),
+            buildDrawerSubItem(
+              context,
+              icon: Icons.add,
+              text: 'Add Vehicle',
+              page: const CreateBooking(),
+            ),
+          ],
         ),
-        title: const Text(
-          'Management',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        children: [
-          buildDrawerSubItem(
-            context,
-            icon: Icons.contact_support_outlined,
-            text:
-                'Support Requests (${clientRequestCount > 0 ? clientRequestCount : 0})',
-            page: const ClientSupportRequests(),
-          ),
-          buildDrawerSubItem(
-            context,
-            icon: Icons.add,
-            text: 'Add Vehicle',
-            page: const CreateBooking(),
-          ),
-        ],
-      ),
       const Divider(),
       buildDrawerItem(
         context,
