@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stage_mgt_app/backend/models/contactus.dart';
 import 'package:stage_mgt_app/backend/models/notification.dart';
 import 'package:stage_mgt_app/backend/models/user.dart';
+import 'package:stage_mgt_app/backend/services/contactus_service.dart';
 import 'package:stage_mgt_app/backend/services/notification_service.dart';
 import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/pages/booking/add_booking.dart';
@@ -23,14 +25,18 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   String loggedInUser = "Loading...";
   String userEmail = "Loading...";
-  int notificationCount = 0; // Notification count state
+  int notificationCount = 0;
+  int clientRequestCount = 0;
+
   final NotificationService _notificationService = NotificationService();
+  final ContactUsService _contactUsService = ContactUsService();
 
   @override
   void initState() {
     super.initState();
     _loadUserDetails();
     _loadNotificationCount();
+    _loadClientRequestCount(); // Fetch client requests count
   }
 
   void _loadUserDetails() async {
@@ -75,6 +81,28 @@ class _AppDrawerState extends State<AppDrawer> {
       } catch (e) {
         setState(() {
           notificationCount = 0;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadClientRequestCount() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    final String userId = pref.getString('userId') ?? '';
+
+    if (userId.isNotEmpty) {
+      try {
+        List<ContactUs> clientRequests =
+            await _contactUsService.fetchAllRequests();
+
+        setState(() {
+          clientRequestCount = clientRequests
+              .where((clientRequest) => !clientRequest.isReadByAdmin)
+              .length; // Count only unread requests
+        });
+      } catch (e) {
+        setState(() {
+          clientRequestCount = 0; // Default to 0 if an error occurs
         });
       }
     }
@@ -198,7 +226,8 @@ class _AppDrawerState extends State<AppDrawer> {
           buildDrawerSubItem(
             context,
             icon: Icons.contact_support_outlined,
-            text: 'Support Requests.',
+            text:
+                'Support Requests (${clientRequestCount > 0 ? clientRequestCount : 0})',
             page: const ClientSupportRequests(),
           ),
           buildDrawerSubItem(

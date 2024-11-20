@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
 
   void signUserOut(BuildContext context) {
     UserService service = UserService();
+
     service
         .logoutUser(); // Assuming this method properly logs out the user (e.g., clearing session, Firebase sign-out, etc.)
     Navigator.pushReplacement(

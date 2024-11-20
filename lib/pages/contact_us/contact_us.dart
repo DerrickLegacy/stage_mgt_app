@@ -42,6 +42,8 @@ class _ContactSupportState extends State<ContactSupport> {
       'emailAddress': emailAddressController.text,
       'message': messageController.text,
       'title': titleController.text,
+      'isReadByAdmin': false,
+      'username': await getUserProperty("username"),
     };
 
     await contactService.sendMessage(messageDetails);
