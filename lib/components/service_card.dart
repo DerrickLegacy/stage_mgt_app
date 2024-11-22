@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:stage_mgt_app/pages/machineOperators.dart';
+import 'package:stage_mgt_app/pages/trucks.dart';
 
 class ServiceCard extends StatelessWidget {
   final String title;
@@ -92,13 +94,13 @@ class OurServices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(20.0),
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title "Our Services"
-          Text(
+          const Text(
             "Our Services",
             style: TextStyle(
               fontSize: 20,
@@ -106,9 +108,9 @@ class OurServices extends StatelessWidget {
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           // Row with two service cards
-          Row(
+          const Row(
             //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
@@ -126,6 +128,45 @@ class OurServices extends StatelessWidget {
                       'lib/images/deliver.jpg', // Replace with your image path
                   // lib/images/taxi.jpeg
                 ),
+              ),
+            ],
+          ),
+           Row(
+            //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap:(){
+                    // Navigate to a specific screen or perform an action
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => MachineOperatorsScreen(),
+                    ));
+                  },
+                  child: const ServiceCard(
+                  title: "Hire TruckOperators",
+                  imagePath:
+                      'lib/images/operator.jpg', // Replace with your image path
+                  // isNew: true, // Show "NEW" badge
+                ),
+                )
+                
+              ),
+              Expanded(
+               child: GestureDetector(
+                 onTap: () {
+                   // Navigate to a specific screen or perform an action
+                   Navigator.push(context, MaterialPageRoute(
+                     builder: (context) => TrucksScreen(),
+                   ));
+                 },
+                 child: const ServiceCard(
+                  title: "Hire Trucks",
+                  imagePath:
+                      'lib/images/truck.jpg', // Replace with your image path
+                  // lib/images/taxi.jpeg
+                ),
+               )
+                
               ),
             ],
           ),
