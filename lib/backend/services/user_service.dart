@@ -108,6 +108,7 @@ class UserService implements UserController {
       });
       print('User registered with userId: $userId');
     } catch (e) {
+      print(e);
       throw ErrorMessage(
           errorMessage: '"User registration failed"', error: '$e');
     }
