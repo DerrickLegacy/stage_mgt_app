@@ -20,17 +20,11 @@ class VehicleService extends IVehicle {
   Future<List<VehicleDetails>> getVehiclesForDropDownList() async {
     try {
       final QuerySnapshot snapshot = await _db.collection(collectionName).get();
-      print("SNAPSHOT: ");
-      print(snapshot.toString());
 
-      // Map the snapshot to a list of VehicleDetails objects
       return snapshot.docs.map((doc) {
-        // Access the vehicleType and costPerMileage fields
         final vehicleType = doc['vehicleType'] as String;
-        final costPerMileage =
-            doc['costPerMilage'] as String; // Assuming it's stored as a string
+        final costPerMileage = doc['costPerMilage'] as String;
 
-        // Return a VehicleDetails object
         return VehicleDetails(
           vehicleType: vehicleType,
           costPerMileage: costPerMileage,

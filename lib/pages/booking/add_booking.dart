@@ -63,20 +63,17 @@ class _CreateBookingState extends State<CreateBooking> {
 
   Future<void> _loadVehicles() async {
     try {
-      // Fetch the vehicles and store their details
       allVehicleDetails = (await vehicleService.getVehiclesForDropDownList());
 
-      // Extract only the vehicle types for dropdown options
       vehicleOptions =
           allVehicleDetails.map((vehicle) => vehicle.vehicleType).toList();
 
-      print("Hereeeee");
       print(vehicleOptions);
 
       if (vehicleOptions.isNotEmpty) {
         setState(() {
           selectedVehicle = vehicleOptions[0];
-          calculateTotalCost(); // Recalculate total cost on vehicle load
+          calculateTotalCost();
         });
       }
     } catch (e) {
@@ -84,7 +81,6 @@ class _CreateBookingState extends State<CreateBooking> {
     }
   }
 
-  // Simulated method for getting vehicle options
   Future<List<String>> getVehiclesForDropDownList() async {
     List<String> vehiclesList =
         (await vehicleService.getVehiclesForDropDownList()).cast<String>();
@@ -94,19 +90,35 @@ class _CreateBookingState extends State<CreateBooking> {
 
   void calculateTotalCost() {
     if (selectedVehicle.isNotEmpty) {
+      // Find selected vehicle details
       final selectedVehicleDetails = allVehicleDetails.firstWhere(
         (vehicle) => vehicle.vehicleType == selectedVehicle,
-        orElse: () => VehicleDetails(vehicleType: '', costPerMileage: '0'),
+        orElse: () {
+          print("No matching vehicle found for: $selectedVehicle");
+          return VehicleDetails(vehicleType: '', costPerMileage: '0');
+        },
       );
 
+      // Debug selected vehicle details
+      print(
+          "Selected Vehicle Details: ${selectedVehicleDetails.vehicleType}, ${selectedVehicleDetails.costPerMileage}");
+
       setState(() {
-        milageCost = int.tryParse(selectedVehicleDetails.costPerMileage) ??
-            0; // Parse the cost
-        double distance = 200.0; // Example fixed distance
+        milageCost =
+            (double.tryParse(selectedVehicleDetails.costPerMileage) ?? 0)
+                .toInt();
+        print("Mileage Cost: $milageCost");
+
+        double distance = 200.0;
         totalCost = milageCost * distance;
+        print("Total Cost: $totalCost");
+
+        // Update controllers
         _milageCostController.text = milageCost.toString();
         _totalCostController.text = totalCost.toStringAsFixed(2);
       });
+    } else {
+      print("No vehicle selected.");
     }
   }
 
