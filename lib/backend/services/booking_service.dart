@@ -13,16 +13,10 @@ class BookingService implements BookingServiceInterface {
   @override
   Future<String> createBooking(BookingModel booking) async {
     try {
-      // Start a write batch
       final batch = _db.batch();
-
-      // Create a new document reference
       final docRef = _db.collection(collection).doc();
 
-      // Create the booking with the generated ID
       final bookingWithId = booking.copyWith(bookingId: docRef.id);
-
-      // Set the document data
       batch.set(docRef, bookingWithId.toMap());
 
       // Commit the batch

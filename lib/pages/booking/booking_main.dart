@@ -65,8 +65,12 @@ class _BookingState extends State<Booking> {
       distance: '',
       travelTime: "4:00 pm",
       emailAddress: await getUserProperty("email"),
-      contactNumber: await getUserProperty("phoneNumber"), cardNumber: '',
+      contactNumber: await getUserProperty("phoneNumber"),
+      cardNumber: '',
       cvc: '',
+      vehicleType: '',
+      milageCost: 0,
+      totalCost: 0,
     );
 
     try {

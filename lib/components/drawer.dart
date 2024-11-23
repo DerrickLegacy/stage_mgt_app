@@ -11,6 +11,7 @@ import 'package:stage_mgt_app/pages/booking/history_page.dart';
 import 'package:stage_mgt_app/pages/booking/upcoming_booking.dart';
 import 'package:stage_mgt_app/pages/contact_us/contact_us.dart';
 import 'package:stage_mgt_app/pages/loyalty_points/loyalty_points.dart';
+import 'package:stage_mgt_app/pages/management/add_vehicle_form.dart';
 import 'package:stage_mgt_app/pages/management/support_requests.dart';
 import 'package:stage_mgt_app/pages/notification/notification_page.dart';
 import 'package:stage_mgt_app/pages/profile/profile_page.dart';
@@ -145,7 +146,7 @@ class _AppDrawerState extends State<AppDrawer> {
               currentAccountPicture: CircleAvatar(
                 child: ClipOval(
                   child: Image.asset(
-                    'lib/images/icons8-google-240.png',
+                    'lib/images/alexander-hipp-iEEBWgY_6lA-unsplash.jpg',
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
@@ -252,7 +253,7 @@ class _AppDrawerState extends State<AppDrawer> {
               context,
               icon: Icons.add,
               text: 'Add Vehicle',
-              page: const CreateBooking(),
+              page: const NewVehicle(),
             ),
           ],
         ),

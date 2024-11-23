@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stage_mgt_app/backend/models/booking.dart';
+import 'package:stage_mgt_app/backend/models/vehicle_details.dart';
 import 'package:stage_mgt_app/backend/services/booking_service.dart';
+import 'package:stage_mgt_app/backend/services/vehicle.dart';
 
 // Define a Character enum for radio buttons
 enum Character { mobileMoney, creditCard }
@@ -16,6 +18,7 @@ class CreateBooking extends StatefulWidget {
 class _CreateBookingState extends State<CreateBooking> {
   Character? _character = Character.mobileMoney;
   final bookingService = BookingService();
+  final vehicleService = VehicleService();
 
   // Controllers for input fields
   final TextEditingController _nameController = TextEditingController();
@@ -26,13 +29,22 @@ class _CreateBookingState extends State<CreateBooking> {
   final TextEditingController _passengerController = TextEditingController();
   final TextEditingController _travelTimeController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _vehicleTypeController = TextEditingController();
+  final TextEditingController _milageCostController = TextEditingController();
+  final TextEditingController _totalCostController = TextEditingController();
   final TextEditingController _cardNumberController = TextEditingController();
   final TextEditingController _cvcController = TextEditingController();
+
+  String selectedVehicle = '';
+  int milageCost = 0;
+  double totalCost = 0.0;
+  List<String> vehicleOptions = [];
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadVehicles();
   }
 
   // Load user data and set default values in controllers
@@ -47,10 +59,63 @@ class _CreateBookingState extends State<CreateBooking> {
     });
   }
 
+  List<VehicleDetails> allVehicleDetails = []; // Store the full vehicle details
+
+  Future<void> _loadVehicles() async {
+    try {
+      // Fetch the vehicles and store their details
+      allVehicleDetails = (await vehicleService.getVehiclesForDropDownList());
+
+      // Extract only the vehicle types for dropdown options
+      vehicleOptions =
+          allVehicleDetails.map((vehicle) => vehicle.vehicleType).toList();
+
+      print("Hereeeee");
+      print(vehicleOptions);
+
+      if (vehicleOptions.isNotEmpty) {
+        setState(() {
+          selectedVehicle = vehicleOptions[0];
+          calculateTotalCost(); // Recalculate total cost on vehicle load
+        });
+      }
+    } catch (e) {
+      print("Error loading vehicles: $e");
+    }
+  }
+
+  // Simulated method for getting vehicle options
+  Future<List<String>> getVehiclesForDropDownList() async {
+    List<String> vehiclesList =
+        (await vehicleService.getVehiclesForDropDownList()).cast<String>();
+
+    return vehiclesList;
+  }
+
+  void calculateTotalCost() {
+    if (selectedVehicle.isNotEmpty) {
+      final selectedVehicleDetails = allVehicleDetails.firstWhere(
+        (vehicle) => vehicle.vehicleType == selectedVehicle,
+        orElse: () => VehicleDetails(vehicleType: '', costPerMileage: '0'),
+      );
+
+      setState(() {
+        milageCost = int.tryParse(selectedVehicleDetails.costPerMileage) ??
+            0; // Parse the cost
+        double distance = 200.0; // Example fixed distance
+        totalCost = milageCost * distance;
+        _milageCostController.text = milageCost.toString();
+        _totalCostController.text = totalCost.toStringAsFixed(2);
+      });
+    }
+  }
+
   Future<String> getUserProperty(String property) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getString(property) ?? '';
   }
+
+  bool isLoading = false;
 
   Future<void> submitBooking() async {
     String paymentMethod =
@@ -68,17 +133,22 @@ class _CreateBookingState extends State<CreateBooking> {
       status: "no action",
       distance: '',
       travelTime: _travelTimeController.text,
+      vehicleType: selectedVehicle,
+      milageCost: milageCost,
+      totalCost: totalCost.toInt(),
       emailAddress: _emailController.text,
       contactNumber: _phoneController.text,
       cardNumber: _cardNumberController.text,
       cvc: _cvcController.text,
     );
+    setState(() => isLoading = true);
 
     try {
       await bookingService.createBooking(booking);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Booking created Successfully.')),
       );
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error creating booking: $e')),
@@ -164,6 +234,35 @@ class _CreateBookingState extends State<CreateBooking> {
                   ],
                 ),
                 const SizedBox(height: 10.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButton<String>(
+                        value: selectedVehicle,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedVehicle = newValue!;
+                            calculateTotalCost(); // Recalculate on selection
+                          });
+                        },
+                        items: vehicleOptions.map((vehicle) {
+                          return DropdownMenuItem<String>(
+                            value: vehicle,
+                            child: Text(vehicle),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                    Expanded(
+                        child: buildTextField("Cost Per Milage", Icons.money,
+                            _milageCostController)),
+                  ],
+                ),
+                const SizedBox(height: 10.0),
+                buildTextField("Total Cost", Icons.money_off_csred_outlined,
+                    _totalCostController),
+                const SizedBox(height: 10.0),
                 buildTextField("Travel Time(2:00 pm)", Icons.access_time,
                     _travelTimeController),
                 const SizedBox(height: 10.0),
@@ -204,28 +303,22 @@ class _CreateBookingState extends State<CreateBooking> {
                   buildTextField("Credit Card Number", Icons.credit_card,
                       _cardNumberController),
                   const SizedBox(height: 10.0),
-                  buildTextField("CVC (Card Verification Code)", Icons.lock,
-                      _cvcController),
+                  buildTextField("CVC", Icons.lock, _cvcController),
                 ],
                 const SizedBox(height: 20.0),
-                const Text(
-                  "Note: Please make sure to fill in all the required fields.",
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 10.0),
-                ElevatedButton(
-                  onPressed: submitBooking,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[700],
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text("Book Now",
-                      style: TextStyle(color: Colors.black)),
-                ),
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: submitBooking,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          // padding: const EdgeInsets.symmetric(vertical: 15.0),
+                        ),
+                        child: const Text(
+                          'Book Now',
+                          style: TextStyle(fontSize: 18.0, color: Colors.white),
+                        ),
+                      ),
               ],
             ),
           ),
@@ -235,13 +328,46 @@ class _CreateBookingState extends State<CreateBooking> {
   }
 
   Widget buildTextField(
-      String label, IconData icon, TextEditingController controller) {
+    String labelText,
+    IconData icon,
+    TextEditingController controller,
+  ) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: label,
+        labelText: labelText,
         prefixIcon: Icon(icon),
         border: const OutlineInputBorder(),
+      ),
+    );
+  }
+
+  Widget buildDropdownField({
+    required String labelText,
+    required IconData icon,
+    required String? value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return InputDecorator(
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixIcon: Icon(icon),
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          isExpanded: true,
+          onChanged: onChanged,
+          items: items.map((item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(item),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

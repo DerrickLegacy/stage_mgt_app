@@ -14,6 +14,9 @@ class BookingModel {
   final String emailAddress;
   final String cardNumber;
   final String cvc;
+  final String vehicleType;
+  final int milageCost;
+  final int totalCost;
 
   BookingModel({
     required this.bookingId,
@@ -31,8 +34,12 @@ class BookingModel {
     required this.emailAddress,
     required this.cardNumber,
     required this.cvc,
+    required this.vehicleType,
+    required this.milageCost,
+    required this.totalCost,
   });
 
+  /// Converts the object to a map for serialization
   Map<String, dynamic> toMap() {
     return {
       'bookingId': bookingId,
@@ -50,9 +57,13 @@ class BookingModel {
       'emailAddress': emailAddress,
       'cardNumber': cardNumber,
       'cvc': cvc,
+      'vehicleType': vehicleType,
+      'milageCost': milageCost,
+      'totalCost': totalCost,
     };
   }
 
+  /// Creates an object from a map
   factory BookingModel.fromMap(Map<String, dynamic> data) {
     return BookingModel(
       bookingId: data['bookingId'] ?? '',
@@ -70,9 +81,13 @@ class BookingModel {
       emailAddress: data['emailAddress'] ?? '',
       cardNumber: data['cardNumber'] ?? '',
       cvc: data['cvc'] ?? '',
+      vehicleType: data['vehicleType'] ?? '',
+      milageCost: (data['milageCost'] ?? 0) as int,
+      totalCost: (data['totalCost'] ?? 0) as int,
     );
   }
 
+  /// Creates a copy of the object with updated values
   BookingModel copyWith({
     String? bookingId,
     String? name,
@@ -83,12 +98,15 @@ class BookingModel {
     String? numberOfPassengers,
     String? paymentMethod,
     String? status,
-    String? contactNumber,
     String? distance,
     String? travelTime,
+    String? contactNumber,
     String? emailAddress,
     String? cardNumber,
     String? cvc,
+    String? vehicleType,
+    int? milageCost,
+    int? totalCost,
   }) {
     return BookingModel(
       bookingId: bookingId ?? this.bookingId,
@@ -100,12 +118,15 @@ class BookingModel {
       numberOfPassengers: numberOfPassengers ?? this.numberOfPassengers,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       status: status ?? this.status,
-      emailAddress: emailAddress ?? this.emailAddress,
       distance: distance ?? this.distance,
       travelTime: travelTime ?? this.travelTime,
       contactNumber: contactNumber ?? this.contactNumber,
+      emailAddress: emailAddress ?? this.emailAddress,
       cardNumber: cardNumber ?? this.cardNumber,
       cvc: cvc ?? this.cvc,
+      vehicleType: vehicleType ?? this.vehicleType,
+      milageCost: milageCost ?? this.milageCost,
+      totalCost: totalCost ?? this.totalCost,
     );
   }
 }
