@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:stage_mgt_app/backend/interfaces/contactus_controller.dart';
 // import 'package:stage_mgt_app/backend/models/contactus.dart';
 import 'package:stage_mgt_app/backend/services/contactus_service.dart';
-import 'package:stage_mgt_app/components/drawer.dart';
+import 'package:stage_mgt_app/pages/home_page.dart';
 
 class ContactSupport extends StatefulWidget {
   const ContactSupport({Key? key}) : super(key: key);
@@ -146,13 +146,14 @@ class _ContactSupportState extends State<ContactSupport> {
                     onPressed: () async {
                       await sendMessage();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Message sent successfully!')),
+                        const SnackBar(
+                            content: Text('Message sent successfully!')),
                       );
-
+                      await Future.delayed(const Duration(seconds: 3));
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const AppDrawer()),
+                            builder: (context) => const HomePage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

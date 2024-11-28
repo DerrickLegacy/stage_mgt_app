@@ -62,7 +62,7 @@ class TrucksScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         //truck.hourlyRate as String,
-                        truck.name,
+                        'hourly Rate: USD ${truck.hourlyRate}',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.brown[300],

@@ -4,6 +4,8 @@ import 'package:stage_mgt_app/backend/models/booking.dart';
 import 'package:stage_mgt_app/backend/models/vehicle_details.dart';
 import 'package:stage_mgt_app/backend/services/booking_service.dart';
 import 'package:stage_mgt_app/backend/services/vehicle.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 // Define a Character enum for radio buttons
 enum Character { mobileMoney, creditCard }
@@ -73,7 +75,7 @@ class _CreateBookingState extends State<CreateBooking> {
       if (vehicleOptions.isNotEmpty) {
         setState(() {
           selectedVehicle = vehicleOptions[0];
-          calculateTotalCost();
+          calculateTotalCost(_fromController.text, _toController.text);
         });
       }
     } catch (e) {
@@ -88,7 +90,7 @@ class _CreateBookingState extends State<CreateBooking> {
     return vehiclesList;
   }
 
-  void calculateTotalCost() {
+  void calculateTotalCost(String fromAddress, String toAddress) async {
     if (selectedVehicle.isNotEmpty) {
       // Find selected vehicle details
       final selectedVehicleDetails = allVehicleDetails.firstWhere(
@@ -99,7 +101,6 @@ class _CreateBookingState extends State<CreateBooking> {
         },
       );
 
-      // Debug selected vehicle details
       print(
           "Selected Vehicle Details: ${selectedVehicleDetails.vehicleType}, ${selectedVehicleDetails.costPerMileage}");
 
@@ -108,15 +109,24 @@ class _CreateBookingState extends State<CreateBooking> {
             (double.tryParse(selectedVehicleDetails.costPerMileage) ?? 0)
                 .toInt();
         print("Mileage Cost: $milageCost");
-
-        double distance = 200.0;
-        totalCost = milageCost * distance;
-        print("Total Cost: $totalCost");
-
-        // Update controllers
-        _milageCostController.text = milageCost.toString();
-        _totalCostController.text = totalCost.toStringAsFixed(2);
       });
+
+      try {
+        // Calculate distance dynamically
+        double distance = await calculateDistance(fromAddress, toAddress);
+        print("Calculated Distance: $distance km");
+
+        setState(() {
+          totalCost = milageCost * distance;
+          print("Total Cost: $totalCost");
+
+          // Update controllers
+          _milageCostController.text = milageCost.toString();
+          _totalCostController.text = totalCost.toStringAsFixed(2);
+        });
+      } catch (e) {
+        print("Error calculating total cost: $e");
+      }
     } else {
       print("No vehicle selected.");
     }
@@ -195,6 +205,50 @@ class _CreateBookingState extends State<CreateBooking> {
       setState(() {
         _travelTimeController.text = selectedTime.format(context);
       });
+    }
+  }
+
+  Future<Position> getCoordinates(String address) async {
+    try {
+      final locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return Position(
+          latitude: locations[0].latitude,
+          longitude: locations[0].longitude,
+          timestamp: DateTime.now(),
+          accuracy: 0.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0,
+        );
+      }
+      throw Exception("No coordinates found for $address");
+    } catch (e) {
+      throw Exception("Error getting coordinates for $address: $e");
+    }
+  }
+
+  Future<double> calculateDistance(String fromAddress, String toAddress) async {
+    try {
+      // Get coordinates for the addresses
+      final fromPosition = await getCoordinates(fromAddress);
+      final toPosition = await getCoordinates(toAddress);
+
+      // Calculate distance in meters
+      double distanceInMeters = Geolocator.distanceBetween(
+        fromPosition.latitude,
+        fromPosition.longitude,
+        toPosition.latitude,
+        toPosition.longitude,
+      );
+
+      // Convert to kilometers
+      return distanceInMeters / 1000;
+    } catch (e) {
+      throw Exception("Error calculating distance: $e");
     }
   }
 
@@ -279,7 +333,10 @@ class _CreateBookingState extends State<CreateBooking> {
                         onChanged: (newValue) {
                           setState(() {
                             selectedVehicle = newValue!;
-                            calculateTotalCost(); // Recalculate total cost on selection
+                            calculateTotalCost(
+                                _fromController.text,
+                                _toController
+                                    .text); // Recalculate total cost on selection
                           });
                         },
                         items: vehicleOptions.map((vehicle) {

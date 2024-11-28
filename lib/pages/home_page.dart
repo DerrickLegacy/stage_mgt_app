@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                 flexibleSpace: FlexibleSpaceBar(
                   centerTitle: true,
                   title: const Text(
-                    "Taxi App",
+                    "Move Me",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 26.0,

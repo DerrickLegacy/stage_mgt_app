@@ -37,7 +37,7 @@ class MachineOperatorsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Machine Operators'),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Colors.blueAccent,
       ),
       body: ListView.builder(
         itemCount: operators.length,
