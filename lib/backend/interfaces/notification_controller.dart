@@ -10,4 +10,5 @@ abstract class INotification {
   Future<void> updateNotification(NotificationModel notification);
   Future<void> markAsRead(String notificationId);
   Future<void> deleteNotification(String id);
+  Future<void> createBookingReminder();
 }

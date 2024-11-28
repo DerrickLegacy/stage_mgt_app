@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:stage_mgt_app/backend/services/notification_service.dart';
 import 'package:stage_mgt_app/backend/services/user_service.dart';
 import 'package:stage_mgt_app/components/drawer.dart';
 import 'package:stage_mgt_app/components/loyaltycard.dart';
 import 'package:stage_mgt_app/components/remindar_c.dart';
 import 'package:stage_mgt_app/components/service_card.dart';
 import 'package:stage_mgt_app/pages/login_page.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
+}
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    await NotificationService().createBookingReminder();
+    return Future.value(true);
+  });
 }
 
 class _HomePageState extends State<HomePage> {
@@ -27,10 +37,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void toggleDarkMode() {
+  void toggleDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = !isDarkMode;
+      prefs.setBool("isDarkMode", isDarkMode); // Save state
     });
+  }
+
+  Future<void> loadDarkModePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDarkMode = prefs.getBool("isDarkMode") ?? false; // Load state
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadDarkModePreference();
+    // Optionally, you can register the task dynamically here if needed
+    Workmanager().registerPeriodicTask(
+      "dailyBookingCheck",
+      "dailyBookingTask",
+      frequency: const Duration(seconds: 10),
+    );
+    updateNotifications();
+  }
+
+  void updateNotifications() {
+    NotificationService().createBookingReminder();
   }
 
   @override

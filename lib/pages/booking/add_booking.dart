@@ -184,6 +184,20 @@ class _CreateBookingState extends State<CreateBooking> {
     }
   }
 
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay currentTime = TimeOfDay.now();
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: currentTime,
+    );
+
+    if (selectedTime != null) {
+      setState(() {
+        _travelTimeController.text = selectedTime.format(context);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -249,12 +263,23 @@ class _CreateBookingState extends State<CreateBooking> {
                 Row(
                   children: [
                     Expanded(
-                      child: DropdownButton<String>(
+                      child: DropdownButtonFormField<String>(
                         value: selectedVehicle,
+                        decoration: InputDecoration(
+                          labelText: "Select Vehicle", // Label for the dropdown
+                          prefixIcon: const Icon(
+                              Icons.directions_car), // Optional: Add an icon
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Match the text field border
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 15.0),
+                        ),
                         onChanged: (newValue) {
                           setState(() {
                             selectedVehicle = newValue!;
-                            calculateTotalCost(); // Recalculate on selection
+                            calculateTotalCost(); // Recalculate total cost on selection
                           });
                         },
                         items: vehicleOptions.map((vehicle) {
@@ -267,16 +292,37 @@ class _CreateBookingState extends State<CreateBooking> {
                     ),
                     const SizedBox(width: 10.0),
                     Expanded(
-                        child: buildTextField("Cost Per Milage", Icons.money,
-                            _milageCostController)),
+                      child: buildTextField(
+                        "Cost Per Mileage",
+                        Icons.money,
+                        _milageCostController,
+                        enabled: false,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10.0),
-                buildTextField("Total Cost", Icons.money_off_csred_outlined,
-                    _totalCostController),
+                buildTextField(
+                  "Total Cost",
+                  Icons.money_off_csred_outlined,
+                  enabled: false,
+                  _totalCostController,
+                ),
                 const SizedBox(height: 10.0),
-                buildTextField("Travel Time(2:00 pm)", Icons.access_time,
-                    _travelTimeController),
+                InkWell(
+                  onTap: () => _selectTime(context),
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: _travelTimeController,
+                      decoration: const InputDecoration(
+                        labelText: "Travel Time",
+                        hintText: "E.g., 2:00 PM",
+                        prefixIcon: Icon(Icons.access_time),
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 10.0),
                 const Text(
                   "Select Payment Method",
@@ -342,8 +388,9 @@ class _CreateBookingState extends State<CreateBooking> {
   Widget buildTextField(
     String labelText,
     IconData icon,
-    TextEditingController controller,
-  ) {
+    TextEditingController controller, {
+    bool enabled = true, // Optional parameter to control enabling/disabling
+  }) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -351,6 +398,7 @@ class _CreateBookingState extends State<CreateBooking> {
         prefixIcon: Icon(icon),
         border: const OutlineInputBorder(),
       ),
+      enabled: enabled, // Use the parameter to disable the input
     );
   }
 
